@@ -155,6 +155,7 @@ public class TEApp extends PApplet implements LXPlugin  {
     // Test/debug patterns
     lx.registry.addPattern(ModelDebugger.class);
     // lx.registry.addPattern(ModuleEditor.class);
+    lx.registry.addPattern(SignalDebugger.class);
 
     // create our library for autopilot
     this.library = initializePatternLibrary(lx);
