@@ -4,6 +4,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.processing</groupId>
   <artifactId>core</artifactId>
-  <version>4.0b7</version>
+  <version>4.1.2</version>
   <description>POM was created from install:install-file</description>
 </project>
