@@ -72,22 +72,6 @@ public class MF64SpiralSquares extends TEMidiFighter64Subpattern {
         if (refCount == 0) this.stopRequest = true;
     }
 
-    /**
-     * FFS -- Java has no real mod operator?  Why??  Are we not
-     * well into the Century of the Fruit Bat?  Isn't forcing
-     * all bytes to be signed trouble enough for one language?  What next?<p>
-     *
-     * @return The floored remainder of the division a/b. The result will have
-     * the same sign as b.
-     */
-    public static float mod(float a, float b) {
-        float result = a % b;
-        if (result < 0) {
-            result += b;
-        }
-        return result;
-    }
-
     private void paintAll(int colors[], int color) {
 
         // clear the decks if we're getting ready to stop
@@ -118,9 +102,8 @@ public class MF64SpiralSquares extends TEMidiFighter64Subpattern {
             // repeat pattern over x axis at interval cx
             // because!
             float cx = 0.3f;
-            x = mod(x + 0.5f * cx, cx) - 0.5f * cx;
-
-
+            x = TEMath.floorModf(x + 0.5f * cx, cx) - 0.5f * cx;
+            
             // set up our square spiral
             float x1 = Math.signum(x);
             float y1 = Math.signum(y);
