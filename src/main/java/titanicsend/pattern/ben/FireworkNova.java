@@ -23,7 +23,10 @@ public class FireworkNova extends PixelblazePort {
 		addParameter("energy", energyParameter);
 	}
 
-	@Override
+    @Override
+    public void configureControls() { ; }
+
+    @Override
 	public void setup() {
 
 	}

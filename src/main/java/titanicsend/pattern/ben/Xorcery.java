@@ -20,7 +20,10 @@ public class Xorcery extends PixelblazePort {
 		super(lx);
 	}
 
-	@Override
+    @Override
+    public void configureControls() { ; }
+
+    @Override
 	public void setup() {
 
 	}

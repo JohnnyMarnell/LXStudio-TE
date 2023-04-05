@@ -84,6 +84,9 @@ public class Fireflies extends PixelblazePort {
 		};
 
 	@Override
+	public void configureControls() { ; }
+
+	@Override
 	public void setup() {
         init();
 	}
