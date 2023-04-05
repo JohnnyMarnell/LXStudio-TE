@@ -138,6 +138,73 @@ function getTrebleRatio() {
   return __pattern.getTrebleRatio();
 }
 
+// getter functions for the common controls
+function getRotationAngleFromSpeed() {
+    return __pattern.getRotationAngleFromSpeed();
+}
+
+function getRotationAngleFromSpin() {
+    return __pattern.getRotationAngleFromSpin();
+}
+
+function getStaticRotationAngle() {
+    return __pattern.getStaticRotationAngle();
+}
+
+function getCurrentColor() {
+    var k = __pattern.controls.color.calcColor();
+    var bri = __pattern.getBrightness();
+
+    var r = (0xff & LXColor.red(k)) * bri;
+    var g = (0xff & LXColor.green(k)) * bri;
+    var b = (0xff & LXColor.blue(k)) * bri;
+    return rgb(r, g, b);
+}
+
+function getTime() {
+    return __pattern.getTime();
+}
+
+function getSpeed() {
+    return __pattern.getSpeed();
+}
+
+function getXPos() {
+    return __pattern.getXPos();
+}
+
+function getYPos() {
+    return __pattern.getYPos();
+}
+
+function getSize() {
+    return __pattern.getSize();
+}
+
+function getQuantity() {
+    return __pattern.getQuantity();
+}
+
+/**
+ * As in Java, for for most uses, getRotationAngle() is recommended, but if you
+ * need direct access to the spin control value, here it is.
+ */
+function getSpin() {
+    return __pattern.getSpin();
+}
+
+function getWow1() {
+    return __pattern.getWow1();
+}
+
+function getWow2() {
+    return __pattern.getWow2();
+}
+
+function getWowTrigger() {
+    return __pattern.getWowTrigger();
+}
+
 /* Pixelblaze compatibility framework glue */
 
 function sentenceCase(text) {

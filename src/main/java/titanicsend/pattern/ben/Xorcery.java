@@ -2,6 +2,7 @@ package titanicsend.pattern.ben;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXCategory;
+import titanicsend.pattern.jon.TEControlTag;
 import titanicsend.pattern.pixelblaze.PixelblazePort;
 
 import static java.lang.Math.abs;
@@ -21,7 +22,9 @@ public class Xorcery extends PixelblazePort {
 	}
 
     @Override
-    public void configureControls() { ; }
+    public void configureControls() {
+		controls.setRange(TEControlTag.SIZE,5,1,10);
+    }
 
     @Override
 	public void setup() {
@@ -68,6 +71,7 @@ public class Xorcery extends PixelblazePort {
 		t2 = time(.1) * PI2;
 		t3 = time(.5);
 		t4 = time(.34) * PI2;
+		scale = getSize();
 	}
 
 	double xorf(double v1, double v2) {
