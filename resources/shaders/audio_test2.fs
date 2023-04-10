@@ -26,12 +26,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     // normalize coordinates
 	vec2 uv = fragCoord.xy / iResolution.xy;
-    // rotate around vehicle origin according to current control settings
-    uv.x -= 0.5;
+
+    // translate to roughly vehicle origin, then scale and rotate according
+    // to common control settings.
+    uv -= vec2(0.5,0.5);
     uv = rotate(uv,iRotationAngle);
-    uv.x += 0.5;
-	// and scale
+    uv += vec2(0.5,0.5);
     uv *= 1.0/iScale;
+
 
     // sound texture size is 512x2
     // we're going to quantize that into a 32 channel EQ

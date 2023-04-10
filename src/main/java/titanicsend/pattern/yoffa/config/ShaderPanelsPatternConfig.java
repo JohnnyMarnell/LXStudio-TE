@@ -207,18 +207,6 @@ public class ShaderPanelsPatternConfig {
     }
 
     @LXCategory("Native Shaders Panels")
-    public static class AAAShaderTester extends ConstructedPattern {
-        public AAAShaderTester(LX lx) {
-            super(lx);
-        }
-        @Override
-        protected List<PatternEffect> createEffects() {
-            return List.of(new NativeShaderPatternEffect("circuitry.fs",
-                    PatternTarget.doubleLargeCanvas(this)));
-        }
-    }
-
-    @LXCategory("Native Shaders Panels")
     public static class Galaxy extends ConstructedPattern {
         public Galaxy(LX lx) {
             super(lx);
