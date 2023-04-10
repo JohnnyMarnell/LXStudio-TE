@@ -53,7 +53,7 @@ public class Wrapper {
     return cachedScript.compiledScript;
   }
 
-  public static Wrapper fromResource(String pbClass, TEAudioPattern pattern, LXPoint[] points) throws Exception {
+  public static Wrapper fromResource(String pbClass, TEPerformancePattern pattern, LXPoint[] points) throws Exception {
     return new Wrapper(new File("resources/pixelblaze/" + pbClass + ".js"), pattern, points);
   }
 
@@ -65,7 +65,7 @@ public class Wrapper {
   String renderName;
   boolean hasError = false;
 
-  public Wrapper(File file, TEAudioPattern pattern, LXPoint[] points) throws ScriptException, IOException {
+  public Wrapper(File file, TEPerformancePattern pattern, LXPoint[] points) throws ScriptException, IOException {
     this.file = file;
     this.pattern = pattern;
     this.points = points;
