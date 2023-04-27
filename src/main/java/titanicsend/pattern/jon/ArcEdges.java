@@ -39,17 +39,16 @@ public class ArcEdges extends TEPerformancePattern {
         options.useAlpha(true);
         options.useLXParameterUniforms(false);
 
-        // TODO - Controls not yet tuned.  I just want to make sure this beast will actually
-        // TODO - work on a Mac before proceeding.
-        controls.setRange(TEControlTag.SIZE,0.008,0.0005,0.02);    // edge "line size"
-        controls.setRange(TEControlTag.QUANTITY,0.675,0.72,0.35);  // noise field position
-        controls.setRange(TEControlTag.WOW1,0.025,0.001,0.06);     // noise magnitude
+        controls.setRange(TEControlTag.SIZE, 1, 5, 0.1);              // scale
+        controls.setRange(TEControlTag.QUANTITY, 0.675, 0.72, 0.35);  // noise field position
+        controls.setRange(TEControlTag.WOW1, 0.025, 0.001, 0.06);     // noise magnitude
+        controls.setRange(TEControlTag.WOW2, 0.008, 0.0005, 0.03);    // edge "line width"
 
         // register common controls with the UI
         addCommonControls();
 
         effect = new NativeShaderPatternEffect("arcedges.fs",
-                PatternTarget.allPointsAsCanvas(this), options);
+            PatternTarget.allPointsAsCanvas(this), options);
 
         // create an n x 4 array, so we can pass line segment descriptors
         // to GLSL shaders.
@@ -67,11 +66,13 @@ public class ArcEdges extends TEPerformancePattern {
     }
 
     // store segment descriptors in our GL line segment buffer.
-    void setUniformLine(int segNo,float x1,float y1, float x2, float y2) {
+    void setUniformLine(int segNo, float x1, float y1, float x2, float y2) {
         //TE.log("setLine %d : %.4f %.4f, %.4f %.4f",segNo,x1,y1,x2,y2);
         gl_segments.position(segNo * 4);
-        gl_segments.put(-x1); gl_segments.put(y1);
-        gl_segments.put(-x2); gl_segments.put(y2);
+        gl_segments.put(-x1);
+        gl_segments.put(y1);
+        gl_segments.put(-x2);
+        gl_segments.put(y2);
         gl_segments.rewind();
     }
 
@@ -79,7 +80,7 @@ public class ArcEdges extends TEPerformancePattern {
     // to aspect corrected normalized 2D GL surface coords
     float modelToMapX(LXPoint pt) {
         //correct for aspect ratio of render target
-        return 1.33333f*((-0.5f+pt.zn));
+        return 1.33333f * ((-0.5f + pt.zn));
     }
 
     // convert from normalized physical model coords
@@ -90,8 +91,8 @@ public class ArcEdges extends TEPerformancePattern {
 
     // scan for edges with at least one connected panel
     void scanForHappyEdges() {
-         Set<TEEdgeModel> edges = model.getAllEdges();
-         int edgeCount = 0;
+        Set<TEEdgeModel> edges = model.getAllEdges();
+        int edgeCount = 0;
 
         for (TEEdgeModel edge : edges) {
 
@@ -102,7 +103,7 @@ public class ArcEdges extends TEPerformancePattern {
                     if (panel.getId().startsWith("S")) {
 
                         //TE.log("Found edge w/panel(s): %s",edge.getId());
-                        getLineFromEdge(edgeCount,edge.getId());
+                        getLineFromEdge(edgeCount, edge.getId());
                         edgeCount++;
                         break;
                     }
@@ -114,44 +115,45 @@ public class ArcEdges extends TEPerformancePattern {
         //TE.log("%d edges found!",edgeCount);
     }
 
-
     // given an edge id, adds a model edge's vertices to our list of line segments
     void getLineFromEdge(int index, String id) {
-        LXPoint v1,v2;
+        LXPoint v1, v2;
 
-        HashMap<String,TEEdgeModel> edges = model.edgesById;
+        HashMap<String, TEEdgeModel> edges = model.edgesById;
 
         TEEdgeModel edge = edges.get(id);
         if (edge != null) {
             //TE.log("Found edge %s", id);
+        } else {
+            TE.log("Null edge %s", id);
         }
-        else {
-            TE.log("Null edge %s",id);
-        }
-        v1 = edge.points[0]; v2 = edge.points[edge.points.length - 1];
+        v1 = edge.points[0];
+        v2 = edge.points[edge.points.length - 1];
 
         // set x1,y1,x2,y2 in line array
-        saved_lines[index][0] = modelToMapX(v1);  saved_lines[index][1] = modelToMapY(v1);
-        saved_lines[index][2] = modelToMapX(v2);  saved_lines[index][3] = modelToMapY(v2);
+        saved_lines[index][0] = modelToMapX(v1);
+        saved_lines[index][1] = modelToMapY(v1);
+        saved_lines[index][2] = modelToMapX(v2);
+        saved_lines[index][3] = modelToMapY(v2);
     }
 
     // sends an array of line segments to the shader
     // should be called after all line computation is done,
     // before running the shader
-    void sendSegments(float[][] lines,int nLines) {
+    void sendSegments(float[][] lines, int nLines) {
         for (int i = 0; i < nLines; i++) {
-            setUniformLine(i,lines[i][0],lines[i][1],lines[i][2],lines[i][3]);
+            setUniformLine(i, lines[i][0], lines[i][1], lines[i][2], lines[i][3]);
         }
-        shader.setUniform("lines", gl_segments,4);
+        shader.setUniform("lines", gl_segments, 4);
     }
 
     @Override
     public void runTEAudioPattern(double deltaMs) {
         // send line segment array data
-        sendSegments(saved_lines,LINE_COUNT);
+        sendSegments(saved_lines, LINE_COUNT);
 
         // run the shader
-       effect.run(deltaMs);
+        effect.run(deltaMs);
     }
 
     @Override
