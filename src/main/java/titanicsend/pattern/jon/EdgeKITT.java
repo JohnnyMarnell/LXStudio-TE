@@ -11,6 +11,8 @@ import titanicsend.pattern.TEAudioPattern;
 import titanicsend.pattern.TEPerformancePattern;
 import titanicsend.util.TEMath;
 
+import static titanicsend.util.TEMath.clamp;
+
 // All LED platforms, no matter how large, must have KITT!
 @LXCategory("Edge FG")
 public class EdgeKITT extends TEPerformancePattern {
@@ -38,7 +40,7 @@ public class EdgeKITT extends TEPerformancePattern {
         int baseColor = calcColor();
 
         // generate 0..1 ramp (sawtooth) from speed timer
-        double t1 =  (Math.abs(getTimeMs()) % 2000) / 2000;
+        double t1 =  (-getTimeMs() % 4000) / 4000;
         tailPct = getSize();
 
 // From a discussion of frame buffer-less, multidimensional KITT patterns
@@ -53,7 +55,8 @@ public class EdgeKITT extends TEPerformancePattern {
 
                 double w1 = Math.max(0f, (tailPct - 1 + triangle(pct1) * square(pct1, .5)) / tailPct);
                 double w2 = Math.max(0f, (tailPct - 1 + triangle(pct2) * square(pct2, .5)) / tailPct);
-                double bri = (w1 * w1) + (w2 * w2);  // gamma correct both waves before combining
+                double bri = clamp((w1 * w1) + (w2 * w2),0,1);  // gamma correct both waves before combining
+                baseColor = getGradientColor((float) (1.0-bri));
                 bri = bri * 255;  // scale for output
 
                 // clear and reset alpha channel
