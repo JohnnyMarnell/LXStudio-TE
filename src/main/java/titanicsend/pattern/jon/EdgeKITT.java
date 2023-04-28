@@ -9,6 +9,7 @@ import heronarts.lx.color.LinkedColorParameter;
 import titanicsend.model.TEEdgeModel;
 import titanicsend.pattern.TEAudioPattern;
 import titanicsend.pattern.TEPerformancePattern;
+import titanicsend.util.TEColor;
 import titanicsend.util.TEMath;
 
 import static titanicsend.util.TEMath.clamp;
@@ -16,7 +17,6 @@ import static titanicsend.util.TEMath.clamp;
 // All LED platforms, no matter how large, must have KITT!
 @LXCategory("Edge FG")
 public class EdgeKITT extends TEPerformancePattern {
-    double tailPct = 0.5f;
 
     public EdgeKITT(LX lx) {
         super(lx);
@@ -41,7 +41,12 @@ public class EdgeKITT extends TEPerformancePattern {
 
         // generate 0..1 ramp (sawtooth) from speed timer
         double t1 =  (-getTimeMs() % 4000) / 4000;
-        tailPct = getSize();
+
+        // Size control sets the KITT tail length
+        double tailPct = getSize();
+
+        // Wow1 controls the foreground vs. gradient color mix.  More Wow1 == more gradient
+        double gradientMix = getWow1();
 
 // From a discussion of frame buffer-less, multidimensional KITT patterns
 // on the Pixelblaze forum.
@@ -55,14 +60,16 @@ public class EdgeKITT extends TEPerformancePattern {
 
                 double w1 = Math.max(0f, (tailPct - 1 + triangle(pct1) * square(pct1, .5)) / tailPct);
                 double w2 = Math.max(0f, (tailPct - 1 + triangle(pct2) * square(pct2, .5)) / tailPct);
-                double bri = clamp((w1 * w1) + (w2 * w2),0,1);  // gamma correct both waves before combining
-                baseColor = getGradientColor((float) (1.0-bri));
-                bri = bri * 255;  // scale for output
 
-                // clear and reset alpha channel
-                baseColor = baseColor & ~LXColor.ALPHA_MASK;
-                baseColor = baseColor | (((int) bri) << LXColor.ALPHA_SHIFT);
-                colors[point.index] = baseColor;
+                // gamma correct both waves before combining to keep the brightness gradient smooth where
+                // they overlap
+                double bri = clamp((w1 * w1) + (w2 * w2),0,1);
+
+                baseColor = getGradientColor((float) (gradientMix * (1.0-bri)));
+                bri = bri * 255;  // scale for LX output
+
+                // set pixel
+                colors[point.index] = TEColor.reAlpha(baseColor,(int) bri);
             }
         }
     }
