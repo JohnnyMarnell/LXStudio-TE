@@ -6,12 +6,14 @@ import titanicsend.model.TEPanelModel;
 import titanicsend.model.TEWholeModel;
 import titanicsend.util.TE;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.HashMap;
 import java.util.Set;
 
 /**
- *  Tools for converting car model geometry for use in patterns, particularly
- *  in native shaders.
+ * Tools for converting car model geometry for use in patterns, particularly
+ * in native shaders.
  */
 public class CarGeometryPatternTools {
     // convert from normalized physical model coords
@@ -28,21 +30,26 @@ public class CarGeometryPatternTools {
     }
 
     /**
-     * Get a specified number of model edges on the front side of the car that are
-     * connected to at least one panel.
-     * @param model
-     * @param lines
-     * @param lineCount
+     * Get a specified number of model edges that are connected to at least one panel. The
+     * string parameter regex is used to filter the edges by name.
+     *
+     * @param model     the TE model object
+     * @param regex     a regular expression to be compared with edge names
+     * @param lines     an n x 4 array of line segments, in the form x1,y1,x2,y2
+     * @param lineCount the maximum number of lines(edges) to retrieve.
+     * @return the number of edges actually retrieved
      */
-    public static void scanForConnectedEdges(TEWholeModel model, float lines[][], int lineCount) {
+    public static int getPanelConnectedEdges(TEWholeModel model, String regex, float lines[][], int lineCount) {
+        Pattern edgePattern = Pattern.compile(regex);
+
         Set<TEEdgeModel> edges = model.getAllEdges();
         int edgeCount = 0;
 
         for (TEEdgeModel edge : edges) {
             if (edge.connectedPanels.size() >= 1) {
                 for (TEPanelModel panel : edge.connectedPanels) {
-                    // use only starboard side panels
-                    if (panel.getId().startsWith("S")) {
+                    Matcher matcher = edgePattern.matcher(panel.getId());
+                    if (matcher.matches()) {
                         //TE.log("Found edge w/panel(s): %s",edge.getId());
                         getLineFromEdge(model, lines, edgeCount, edge.getId());
                         edgeCount++;
@@ -52,6 +59,7 @@ public class CarGeometryPatternTools {
                 }
             }
         }
+        return edgeCount;
     }
 
     // given an edge id, adds a model edge's vertices to our list of line segments
@@ -74,3 +82,5 @@ public class CarGeometryPatternTools {
         }
     }
 }
+
+
