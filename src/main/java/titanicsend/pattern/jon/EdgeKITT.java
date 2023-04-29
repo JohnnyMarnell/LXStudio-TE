@@ -2,12 +2,7 @@ package titanicsend.pattern.jon;
 
 import heronarts.lx.LX;
 import heronarts.lx.LXCategory;
-import heronarts.lx.color.LXColor;
-import heronarts.lx.parameter.*;
-import heronarts.lx.parameter.CompoundParameter;
-import heronarts.lx.color.LinkedColorParameter;
 import titanicsend.model.TEEdgeModel;
-import titanicsend.pattern.TEAudioPattern;
 import titanicsend.pattern.TEPerformancePattern;
 import titanicsend.util.TEColor;
 import titanicsend.util.TEMath;
@@ -36,9 +31,6 @@ public class EdgeKITT extends TEPerformancePattern {
 
     public void runTEAudioPattern(double deltaMs) {
 
-        // pick up the current color
-        int baseColor = calcColor();
-
         // generate 0..1 ramp (sawtooth) from speed timer
         double t1 =  (-getTimeMs() % 4000) / 4000;
 
@@ -54,18 +46,19 @@ public class EdgeKITT extends TEPerformancePattern {
         for (TEEdgeModel edge : model.getAllEdges()) {
             for (TEEdgeModel.Point point : edge.points) {
 
-                double x = 0.5f * point.frac;
+                double x = 0.5 * point.frac;
                 double pct1 = x - t1;
                 double pct2 = -x - t1;
 
-                double w1 = Math.max(0f, (tailPct - 1 + triangle(pct1) * square(pct1, .5)) / tailPct);
-                double w2 = Math.max(0f, (tailPct - 1 + triangle(pct2) * square(pct2, .5)) / tailPct);
+                // create two traveling waves going opposite directions
+                double w1 = Math.max(0f, (tailPct - 1 + triangle(pct1) * square(pct1, 0.5)) / tailPct);
+                double w2 = Math.max(0f, (tailPct - 1 + triangle(pct2) * square(pct2, 0.5)) / tailPct);
 
                 // gamma correct both waves before combining to keep the brightness gradient smooth where
                 // they overlap
                 double bri = clamp((w1 * w1) + (w2 * w2),0,1);
 
-                baseColor = getGradientColor((float) (gradientMix * (1.0-bri)));
+                int baseColor = getGradientColor((float) (gradientMix * (1.0-bri)));
                 bri = bri * 255;  // scale for LX output
 
                 // set pixel

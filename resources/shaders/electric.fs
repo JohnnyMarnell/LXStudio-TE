@@ -87,14 +87,13 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     uv = polar2cart(uv);
 
     float thickness = 3.0 + iScale;
-    float d1 = abs(uv.x * thickness / (uv.x + fbm(uv + 1.25 * iTime / 4.0)));
-    float d2 = abs(uv.y * thickness / (uv.y + fbm(uv - 1.5 * iTime / 4.0)));
+    float d1 = abs(uv.x * thickness / (uv.x + fbm(uv + 1.25 * iTime)));
+    float d2 = abs(uv.y * thickness / (uv.y + fbm(uv - 1.5 * iTime)));
 
     float size = 0.1 + iQuantity / 2.0;
-    float haze = 0.075 + 0.3 * iWow2;
 
-    vec3 col = haze * d1 * size * iColorRGB;
-    col += haze * d2 * size * iColor2RGB;
+    vec3 col = clamp(iWow2 * d1 * size,0.,1.2) * iColorRGB;
+    col += clamp(iWow2 * d2 * size,0.,1.2) * iColor2RGB;
 
     fragColor = vec4(col, max(col.r, max(col.g, col.b)));
 }
