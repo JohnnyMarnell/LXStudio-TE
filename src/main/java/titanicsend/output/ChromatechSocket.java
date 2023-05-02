@@ -125,6 +125,7 @@ public class ChromatechSocket implements Comparable<ChromatechSocket> {
               .stream().mapToInt(i -> i).toArray();
       ArtNetDatagram outputDevice = new ArtNetDatagram(lx, ib, universe);
       outputDevice.setAddress(this.ip);
+      outputDevice.setSequenceEnabled(true);
       lx.addOutput(outputDevice);
     }
   }
