@@ -27,6 +27,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 
 import com.google.gson.Gson;
@@ -35,7 +37,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 
 import heronarts.lx.LX;
+import heronarts.lx.LXComponent;
 import heronarts.lx.LXPlugin;
+import heronarts.lx.modulation.LXModulationEngine;
 import heronarts.lx.pattern.LXPattern;
 import heronarts.lx.pattern.color.GradientPattern;
 import heronarts.lx.pattern.texture.NoisePattern;
@@ -297,6 +301,36 @@ public class TEApp extends PApplet implements LXPlugin {
     
     // Add special view controller
     this.viewCentral = new ViewCentral(lx);
+
+    // j5 hax
+    // IMHO it's great this exists, and should be made public and happen by default on project load
+    lx.addProjectListener((file, change) -> {
+      if (change == LX.ProjectListener.Change.OPEN) {
+        oscQueryAll(lx);
+      }
+    });
+  }
+
+  public static void oscQueryAll(LX lx) {
+    int index = 1;
+    LXComponent component;
+    Set<Integer> visited = new HashSet<>();
+    while ((component = lx.getComponent(index)) != null) {
+      oscQuery(visited, lx, component);
+      index++;
+    }
+  }
+
+  // IMHO it's great this exists, and should be made public and happen by default on project load
+  public static void oscQuery(Set<Integer> visited, LX lx, LXComponent component) {
+    if (!visited.contains(component.getId())) {
+      visited.add(component.getId());
+      component.getParameters().forEach(lx.engine.osc::sendParameter);
+      if (component instanceof LXModulationEngine) {
+        ((LXModulationEngine) component).getModulators().forEach(m -> oscQuery(visited, lx, m));
+      }
+      component.children.values().forEach(c -> oscQuery(visited, lx, component));
+    }
   }
 
   private TEPatternLibrary initializePatternLibrary(LX lx) {

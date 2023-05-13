@@ -1,3 +1,17 @@
+# JM / IQE Inspiraishe
+
+Use this `jm/vj` branch, and start LX with `mvn exec:java@Main -Dexec.args="vehicle AutoVJ.lxp"`.
+This loads the (amazing) "AutoVJ" control LX project for TE, I'm assuming to allow easy ("auto"?) VJ control.
+
+Set tempo to internal, 126 BPM, and play song of that BPM, thru BlackHole capture, and select it in Global.
+
+Setting to long cycle time, but quick transitions, for first 3 channels, plus enabling "Up".
+
+I think default loads with Down + Chorus channel faders up, on "WaterPanels" and "AudioTest2"
+
+====
+
+
 Titanic's End LXStudio
 ==
 
