@@ -101,6 +101,7 @@ public class TEApp extends PApplet implements LXPlugin {
   public static final boolean ENABLE_VIEW_CENTRAL = true;
   public static final boolean DELAY_FILE_OPEN_TO_FIRST_ENGINE_LOOP = true;
 
+
   @Override
   public void settings() {
     if (FULLSCREEN) {
